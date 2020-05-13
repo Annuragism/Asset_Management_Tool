@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css" integrity="sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ" crossorigin="anonymous">
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+
+<style>
+body {font-family: "Lato", sans-serif;}
+
+.sidebar {
+
+  height: 100%;
+  width: 230px;
+  position: fixed;
+  z-index: 1;
+  top: 0;
+  left: 0;
+  background-color: #111;
+  overflow-x: hidden;
+  padding-top: 90px;
+}
+
+.sidebar a {
+  padding: 6px 8px 20px 16px;
+  text-decoration: none;
+  font-size: 20px;
+  color: #818181;
+  display: block;
+}
+
+.sidebar a:hover {
+  color: #f1f1f1;
+}
+.msg{
+  margin-top: 0px;
+}
+
+.main {
+  margin-top:90px;
+  margin-left:230px; /* Same as the width of the sidenav */
+  padding: 0px 10px;
+}
+
+@media screen and (max-height: 450px) {
+  .sidebar {padding-top: 15px;}
+  .sidebar a {font-size: 18px;}
+}
+</style>
+</head>
+<body>
+<!-- :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: -->
+
+<div class="sidebar">
+    <a href="#"><i class="fa fa-fw fa-user"></i> {{manager}}
+  <a href="/mhome"><i class="fa fa-fw fa-home"></i> Home</a>
+  <a href="/view_pending_requests"><i class="fa fa-fw fa-wrench"></i>View Pending Requests</a>
+  <a href="/empoyee_and_asset_of_manager"><i class="fa fa-fw fa-user"></i> Employees and Assets</a>
+  <hr style="color:white;">
+
+  <a href="/raise_a_request_by_manager"><i class="fa fa-fw fa-wrench"></i>Raise a Requests</a>
+  <a href="/view_manager_request"><i class="fa fa-fw fa-wrench"></i>View My Requests</a>
+  <a href="/view_manager_asset"><i class="fa fa-fw fa-wrench"></i>View My Asset</a>
+  <a href="/transfer_manager_request"><i class="fa fa-fw fa-wrench"></i>Transfer My Assets</a>
+  <a href="/change_manager_password"><i class="fa fa-fw fa-edit"></i>Change Password</a>
+  <a href="/manager-logout"><i class="fa fa-fw fa-sign-out"></i>Logout</a>
+</div>
+
+<!-- :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: -->
+<div class="main">
+  <div class="msg">
+    {{#if msg}}<div class="card bg-danger text-dark"><div class="card-body">{{msg}}</div></div>{{/if}}
+    {{#if success_msg}}<div class="card bg-success text-white"><div class="card-body">{{success_msg}}</div></div>{{/if}}
+  </div>
+    <h2>View Pending Requests</h2>
+  <div class="jumbotron">
+<h4>Status code for Refrence:</h4><h5>
+  <span style="color:orange;">1.Not Approved by Manager</span><br>
+  <span style="color:red;">2.Reject by Support</span><br>
+  <span style="color:orange;">3.Not Approved by support</span><br>
+  <span style="color:red;">4.Reject by Manager</span><br>
+  <span style="color:green;">5.Approved</span></h5>
+  <a href="/view_transfer_request_from_manager" class="btn btn-primary" style="float:right;">View Transfer Asset Requests</a>
+</div>
+</div>
+
+<div class="container">
+  {{#if request}}
+  <table class="table table-hover">
+  <thead>
+  <tr>
+  <th>Employee id</th>
+  <th>Asset id</th>
+  <th>Asset Name</th>
+  <th>Remark</th>
+  <th>Status</th>
+  <th>Date of Request</th>
+  <th>Approve</th>
+  <th>Reject</th>
+
+  </tr>
+  </thead>
+  <tbody>
+  {{# each request}}
+  <tr>
+  <td>{{this._doc.Emp_id}}</td>
+  <td>{{this._doc.Asset_id}}</td>
+  <td>{{this._doc.Asset_name}}</td>
+  <td>{{this._doc.Remarks}}</td>
+  <td>{{this.requestStatus}}</td>
+  <td>{{this._doc.Request_date}}</td>
+  <td><a href="/approve_by_manager?eid={{this._doc.Emp_id}}&aid={{this._doc.Asset_id}}"><i class="fas fa-check-square"style="color:black;" ></i></a></td>
+  <td><a href="/reject_by_manager?eid={{this._doc.Emp_id}}&aid={{this._doc.Asset_id}}"><i class="fas fa-times-circle"style="color:black;" ></i></a></td>
+  </tr>
+  {{/each}}
+</tbody>
+</table>
+{{else}}
+<h2>No Pending Requests Right now..!!!</h2>
+{{/if}}
+
+</div><!--//container -->
+</div>
+</body>
+</html>

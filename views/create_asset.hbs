@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+
+<style>
+body {font-family: "Lato", sans-serif;}
+
+.sidebar {
+
+  height: 100%;
+  width: 230px;
+  position: fixed;
+  z-index: 1;
+  top: 0;
+  left: 0;
+  background-color: #111;
+  overflow-x: hidden;
+  padding-top: 90px;
+}
+
+.sidebar a {
+  padding: 6px 8px 20px 16px;
+  text-decoration: none;
+  font-size: 20px;
+  color: #818181;
+  display: block;
+}
+
+.sidebar a:hover {
+  color: #f1f1f1;
+}
+.msg{
+  margin-top: 0px;
+}
+
+.main {
+  margin-top:90px;
+  margin-left:230px; /* Same as the width of the sidenav */
+  padding: 0px 10px;
+}
+
+@media screen and (max-height: 450px) {
+  .sidebar {padding-top: 15px;}
+  .sidebar a {font-size: 18px;}
+}
+</style>
+</head>
+<body>
+  <script>
+     // $(document).ready(function(){
+
+function f1()
+{
+
+
+  var aid=$('#aid').val();
+
+  //AJAX code
+  var mydata='aid='+aid;
+  $.ajax({
+    url:'check-assetid',
+    data:mydata,
+    type:'get',
+    success:function(response){
+      if(response.MSG.indexOf('Already Exist')!=-1)
+   {
+        $('#aid').val('A-');
+        $('#MSG').css({'color':'red'})
+    }
+     else{
+       $('#MSG').css({'color':'green'})
+         }
+    $('#MSG').html(response.MSG);
+  }
+  })//ajax end
+
+}
+
+     // });
+  </script>
+<!-- :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: -->
+<div class="sidebar">
+    <a href="#"><i class="fa fa-fw fa-user"></i> {{admin}}
+  <a href="/adminhome"><i class="fa fa-fw fa-home"></i> Home</a>
+  <a href="/create_asset"><i class="fa fa-fw fa-building"></i>Create Asset</a>
+  <a href="/view_asset"><i class="fa fa-fw fa-building"></i>view all Asset</a>
+  <a href="/create_employee"><i class="fa fa-fw fa-wrench"></i>Employee</a>
+  <a href="/view_user"><i class="fa fa-fw fa-user"></i> View users</a>
+  <a href="/change_password"><i class="fa fa-fw fa-edit"></i>Change Password</a>
+  <a href="/admin-logout"><i class="fa fa-fw fa-sign-out"></i>Logout</a>
+</div>
+<!-- :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: -->
+<div class="main">
+  <div class="msg">
+    {{#if msg}}<div class="card bg-danger text-dark"><div class="card-body">{{msg}}</div></div>{{/if}}
+    {{#if success_msg}}<div class="card bg-success text-white"><div class="card-body">{{success_msg}}</div></div>{{/if}}
+  </div>
+  <div class="jumbotron"><h3>Create Asset</h3></div>
+
+<div class="container">
+<form action="create_asset" method="post">
+  <div class="form-group">
+        <label for="email">Enter Asset name:</label>
+        <input type="text" class="form-control" id="name"  name="name" required>
+      </div>
+      <div class="form-group">
+            <label for="email">Enter Asset ID:(should be like A-1,A-2....etc)</label>
+            <input type="text" class="form-control" id="aid"  name="aid" value="A-" onkeyup="f1()" required>
+          </div>
+          <div id="MSG"></div>
+
+          <div class="form-group">
+                <label for="email">Enter Quantity</label>
+                <input type="text" class="form-control" id="Quantity"  name="Quantity" value="1" required>
+              </div>
+      <div class="form-group">
+            <label for="email">Enter Asset type:</label>
+            <select class="form-control" id="type"  name="type" required>
+              <option disabled>--choose option--</option>
+              <option>Computer System</option>
+              <option>Mobile Devices</option>
+              <option>Networking Devices</option>
+              <option>Other</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+                <input type="submit" class="btn btn-primary" value="Create Asset">
+          </div>
+
+</div><!--//container -->
+</div>
+</body>
+</html>
