@@ -22,6 +22,8 @@ const Asset=require('../models/Asset')
 const Request=require('../models/Request')
 const ManagerRequest=require('../models/ManagerRequest')
 const Transfer=require('../models/Transfer')
+const Task=require('../models/Task')
+const Message=require('../models/Message')
 
 //----------------------------------------------------------------------
 
@@ -134,6 +136,8 @@ switch (select) {
                  }
                  else{
                  req.session.employee=email;
+                 var eid=result[0].Emp_id;
+                 req.session.eid=eid;
                  res.render('employeehome',{employee:req.session.employee})
                 }
            }
@@ -706,6 +710,21 @@ router.get('/raise_a_request',(req,res)=>{
 })
 })
 //---------------------------------------------------------------------------
+router.get('/employee_profile',(req,res)=>{
+  Employee.find({Email_id:req.session.employee},(err,result)=>{
+    res.render('employee_profile',{data:result,employee:req.session.employee})
+
+  })
+})
+//----------------------------------------------------------------------------
+//form action of update employee
+router.post('/update_employee',(req,res)=>{
+     Employee.update({Emp_id:req.body.Emp_id},{First_name:req.body.fname,Last_name:req.body.lname,Password:req.body.pwd,Mobile:req.body.mno,Emaild:req.body.email},(err,result)=>{
+     res.render('Employeehome',{employee:req.session.employee,success_msg:"Profile Successfully Updated ..!!!"})
+   })//Employee updation end
+
+})//req,res end
+//-----------------------------------------------------------------------------------------------------------
 //form action of raising a Request
 router.post('/raise_a_request_formaction',(req,res)=>{
   var assetname=req.body.select;
@@ -852,9 +871,252 @@ router.post('/transfer_assets_formaction',(req,res)=>{
 })//asset find end here
 })//req,res end
 //-------------------------------------------------------------------------
+//############################################     SEND MESSAGE         #####################################################################
+//send_message_to_manager
+router.get('/send_message_to_manager',(req,res)=>{
+  Employee.find({Email_id:req.session.employee},(err,result)=>{
+    if (req.session.employee==null) res.render('login',{msg:"session expired"})
+    else if(err) throw err;
+    else
+    {
+    var mid=result[0].Manager_id;
+    Manager.find({Manager_id:mid},(err,manager_data)=>{
+      if (err) throw err;
+      else
+      res.render('send_message_to_manager',{employee:req.session.employee,manager_data:manager_data})
+
+    })//manager find end here
+   }
+  })//employee find end here
+});
+//-------------------------------------------------------------------------------------
+//send_message_to_manager_from_method
+router.post("/send_message_to_manager_form_method",(req,res)=>{
+Employee.find({Email_id:req.session.employee},(err,result)=>{
+  var from=result[0].Emp_id;
+  //-----------------------------
+
+  var to=req.body.to;
+  var subject=req.body.subject;
+  var message=req.body.message;
+
+  //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@22
+  //                Creating message
+             var newmessage=Message({
+               Message:message,
+               Subject:subject,
+               To:to,
+               From:from,
+                    })
+              newmessage.save().then((data)=>console.log("new Message send to  manager"+data));
+  //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+  res.render('Employeehome',{success_msg:"New Message has been sent to Manager"})
+
+})//employee find end here
+
+})
+//----------------------------------------------------------------------------------------
+//Employee Sent Box
+router.get('/sentbox_of_employee',(req,res)=>{
+  Employee.find({Email_id:req.session.employee},(err,result)=>{
+    var eid=result[0].Emp_id;
+    Message.find({From:eid},(err,msg_data)=>{
+      if (err) throw err;
+      else if (msg_data!=0)
+       {
+         res.render('employee_sentbox',{employee:req.session.employee,msg_data:msg_data})
+
+      }
+      else {
+        res.render('employee_sentbox',{msg:"No data Found"})
+      }
+    })//Message
+
+  })//manager
+
+});
+//-----------------------------------------------------------------------------------------
+//-----------------------------------------------------------------------------------------
+//Employee Inbox
+router.get('/inbox_of_employee',(req,res)=>{
+    Message.find({To:req.session.eid},(err,msg_data)=>{
+      if (err) throw err;
+      else if (msg_data!=0)
+       {
+         res.render('inbox_of_employee',{employee:req.session.employee,msg_data:msg_data})
+
+      }
+      else {
+        res.render('inbox_of_employee',{msg:"No data Found"})
+      }
+    })//Message
+
+});
+//-----------------------------------------------------------------------------------------
+//######################################### TASK ############################################################
+router.get('/view_my_task',(req,res)=>{
+  Employee.find({Email_id:req.session.employee},(err,result)=>{
+    if (err) throw err;
+    else if(req.session.employee==null){res.render('login',{msg:"Session Expired"})}
+    else
+    {
+    var eid=result[0].Emp_id;
+    Task.find({Emp_id:eid},(err,task_data)=>{
+      if (err) throw err;
+      else
+       {
+                 var requestStatus=task_data.map((rec)=>{
+                   if(rec.Status==0)
+                   return "Pending :not open yet";
+                    if(rec.Status==1)
+                    return "Unable to do";
+                    else if(rec.Status==2)
+                    return "In progress";
+                    else if(rec.Status==3)
+                    return "Completed";
+
+                 })//map end
+                 var finaldata=task_data.map((rec,index)=>{
+                  var pair={requestStatus:requestStatus[index]};
+                  var objs={...rec,...pair}
+                  return objs;
+                 })//finaldata end here
+
+             res.render('view_employee_task',{employee:req.session.employee,task_data:task_data,finaldata:finaldata})
+       }
+    })//Task
+  }
+  })//Employee
+
+});
+//-----------------------------------------------------------------------------------------
+//view_my_task_form_action
+router.post("/view_my_task_form_action",(req,res)=>{
+var status=req.body.status;
+var eid=req.body.eid;
+var id=req.body.id;
+//console.log(status+"\n"+eid+"\n"+id);
+Task.update({_id:id,Emp_id:eid},{Status:status},(err,result)=>{
+  if (err) throw err;
+  else if (result.nModified>0) {
+
+    Task.find({Emp_id:eid},(err,task_data)=>{
+      if (err) throw err;
+      else
+       {
+                 var requestStatus=task_data.map((rec)=>{
+                   if(rec.Status==0)
+                   return "Pending :not open yet";
+                    if(rec.Status==1)
+                    return "Unable to do";
+                    else if(rec.Status==2)
+                    return "In progress";
+                    else if(rec.Status==3)
+                    return "Completed";
+
+                 })//map end
+                 var finaldata=task_data.map((rec,index)=>{
+                  var pair={requestStatus:requestStatus[index]};
+                  var objs={...rec,...pair}
+                  return objs;
+                 })//finaldata end here
+
+             res.render('view_employee_task',{employee:req.session.employee,task_data:task_data,finaldata:finaldata})
+       }
+    })//Task
+  }
+  else {
+
+    Employee.find({Email_id:req.session.employee},(err,result)=>{
+      if (err) throw err;
+      else if(req.session.employee==null){res.render('login',{msg:"Session Expired"})}
+      else
+      {
+      var eid=result[0].Emp_id;
+
+      Task.find({Emp_id:eid},(err,task_data)=>{
+        if (err) throw err;
+        else
+         {
+               res.render('view_employee_task',{msg:"Task Status  has not been submitted to Manager",employee:req.session.employee,task_data:task_data})
+         }
+      })//Task
+    }
+    })//Employee
+
+  }
+
+})//task find end here
+
+})
+//-----------------------------------------------------------------------------------------
+///view_my_team_employee
+router.get('/view_my_team_employee',(req,res)=>{
+  Employee.find({Email_id:req.session.employee},(err,result)=>{
+    if (err) throw err;
+    else if (req.session.employee==null) { res.render('login',{msg:"Session Expired"})     }
+    else {
+
+          mid=result[0].Manager_id;
+          Employee.find({Manager_id:mid},(err,emp_data)=>{
+            if (err) throw err;
+            else if (req.session.employee==null) { res.render('login',{msg:"Session Expired"})     }
+            else
+            {
+              res.render('view_my_team_employee',{employee:req.session.employee,emp_data:emp_data,mid:mid})
+            }
+          })//Employee
+
+    }
+  })//Employee
+});
+//-----------------------------------------------------------------------------------------
+router.get('/view_employee_task_statistics',(req,res)=>{
+  Task.find({Emp_id:req.session.eid,Status:'3'},(err,completed_task)=>{
+    if (err) throw err;
+    else {
+      console.log(completed_task);
+      Task.find({Emp_id:req.session.eid,$or: [ {Status:'1' } ,{ Status:'2' } ] } ,(err,incompleted_task)=>{
+        if (err) throw err;
+        else {
+          console.log(incompleted_task);
+          res.render('view_employee_task_statistics',{employee:req.session.employee,eid:req.session.eid,incompleted_task:incompleted_task,completed_task:completed_task,incompleted_task_length:incompleted_task.length,completed_task_length:completed_task.length})
+
+
+            }
+      })//task end
+
+    }
+  })//task end
+});
+//-----------------------------------------------------------------------------------------
+//-----------------------------------------------------------------------------------------
+//-----------------------------------------------------------------------------------------
+//-----------------------------------------------------------------------------------------
+//-----------------------------------------------------------------------------------------
+//-----------------------------------------------------------------------------------------
+
+
+//#############################################################################################################################
 //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
                             // MANAGER MODULE
 //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+//---------------------------------------------------------------------------
+router.get('/manager_profile',(req,res)=>{
+  Manager.find({Email_id:req.session.manager},(err,result)=>{
+    res.render('manager_profile',{data:result,manager:req.session.manager})
+
+  })
+})
+//----------------------------------------------------------------------------
+//form action of update employee
+router.post('/update_manager',(req,res)=>{
+     Manager.update({Manager_id:req.body.Manager_id},{First_name:req.body.fname,Last_name:req.body.lname,Password:req.body.pwd,Mobile:req.body.mno,Emaild:req.body.email},(err,result)=>{
+     res.render('managerhome',{manager:req.session.manager,success_msg:"Profile Successfully Updated ..!!!"})
+   })//Employee updation end
+
+})//req,res end
+//-----------------------------------------------------------------------------------------------------------
 //view asset_request from employee
 router.get('/view_pending_requests',(req,res)=>{
   Manager.find({Email_id:req.session.manager},(err,result)=>{
@@ -1220,12 +1482,244 @@ ManagerRequest.update({Status:'5',Asset_id:assetid,Manager_id:mid},{Manager_id:t
 })//asset find end here
 })//req,res end
 //----------------------------------------------------------------------------------------------------------------
-//-----------------------------------------------------------------------------------------------------------
+//Manager Assign task to employee under him/here
+router.get('/manager_assign_task',(req,res)=>{
+  var today = new Date();
+var dd = String(today.getDate()).padStart(2, '0');
+var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+var yyyy = today.getFullYear();
+   today = dd + '-' + mm + '-' + yyyy;
+  Manager.find({Email_id:req.session.manager},(err,result)=>{
+    if(req.session.manager==null){res.render('login')}
+    else if (err) {res.render('error')}
+    else{
+    //console.log(result);
+     var mid=result[0].Manager_id;
+    Employee.find({Manager_id:mid,Status:'0'},(err,employee_data)=>{
+       console.log(employee_data);
 
+        if (err) res.render('error');
+        else
+        res.render('manager_assign_task',{employee_data:employee_data,manager:req.session.manager,today:today})
+    })//request find
+  }
+  })//employee find end
+
+});
+//--------------------------------------------------------------------------------------------------------------------
+//assign-task-from-manager formaction
+router.post("/assign-task-from-manager",(req,res)=>{
+Manager.find({Email_id:req.session.manager},(err,mresult)=>{
+  var mid=mresult[0].Manager_id;
+  ///---------------------------------------------
+  var tname=req.body.tname;
+  var tdescription=req.body.tdescription;
+  var eid=req.body.eid;
+  var deadline=req.body.deadline;
+  //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@22
+  //                Creating Task
+             var newtask=Task({
+               Task_name:tname,
+               Task_description:tdescription,
+               Deadline_date:deadline,
+               Emp_id:eid,
+               From_manager:mid,
+               Status:'0', //(0-pending,1-unable to do,2-in progress,3-completed)
+               Final_competion_status:'close',//(open or close),
+               Final_rating:'',
+               Feedback:'',
+               Rating:'0',
+               Total_task:'1',
+               Completed:'0',
+               Not_Completed:'0'
+                    })
+              newtask.save().then((data)=>console.log("new Task assign by manager"+data));
+  //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+  res.render('managerhome',{success_msg:"Task has been Assigned to Employee"})
+})//manager find end here
+
+})
+//-----------------------------------------------------------------------------------------------------------------
+//view_assigned_task_from_manager
+router.get('/view_assigned_task_from_manager',(req,res)=>{
+  Manager.find({Email_id:req.session.manager},(err,mresult)=>{
+    if (err) throw err;
+    else if(req.session.manager==null){res.render('login',{msg:"session expired"})}
+    else
+    {
+    var mid=mresult[0].Manager_id;
+    ///---------------------------------------------
+   Task.find({From_manager:mid},(err,task_result)=>{
+     if (err) throw err;
+     else if (task_result.length!=0)
+     {
+         var requestStatus=task_result.map((rec)=>{
+            if(rec.Status==0)
+            return "Pending ";
+            else if(rec.Status==1)
+            return "Unable to do";
+            else if(rec.Status==2)
+            return "In-Progress";
+            else if(rec.Status==3)
+            return "Completed";
+         })//map end
+         var finaldata=task_result.map((rec,index)=>{
+          var pair={requestStatus:requestStatus[index]};
+          var objs={...rec,...pair}
+          return objs;
+         })//finaldata end here
+     //console.log(task_result);
+     res.render('view_assigned_task_from_manager',{manager:req.session.manager,task_result:finaldata})
+}
+else {
+  res.render('view_assigned_task_from_manager',{manager:req.session.manager,msg:"No Tasks Assigned Yet "})
+
+}
+   })//task find end here
+    }
+  })//manager find end here
+        });
+//-----------------------------------------------------------------------------------------------------------
+//inbox_of_manager
+router.get('/inbox_of_manager',(req,res)=>{
+  Manager.find({Email_id:req.session.manager},(err,result)=>{
+    var mid=result[0].Manager_id;
+    Message.find({To:mid},(err,msg_data)=>{
+      if (err) throw err;
+      else if (msg_data!=0)
+       {
+         res.render('manager_inbox',{manager:req.session.manager,msg_data:msg_data})
+
+      }
+      else {
+        res.render('manager_inbox',{msg:"No data Found"})
+      }
+    })//Message
+
+  })//manager
+})
+//------------------------------------------------------------------------------------------------------------
+//update_feedback_and_rating_from_manager (form action)
+router.post('/update_feedback_and_rating_from_manager',(req,res)=>{
+  var feedback=req.body.feedback;
+  var rating=req.body.rating;
+  var eid=req.body.heid;
+  var id=req.body.id;
+  console.log(feedback);
+  console.log(rating);
+  console.log(eid);
+  console.log(id);
+  Task.updateOne({_id:id,Emp_id:eid},{Feedback:feedback,Rating:rating},(err,result)=>{
+    if (err) throw err;
+    else if (req.session.manager==null) { res.render('login',{msg:"Session Expired"})}
+    else if (result.nModified>0)
+    {
+
+
+      Manager.find({Email_id:req.session.manager},(err,mresult)=>{
+        if (err) throw err;
+        else if(req.session.manager==null){res.render('login',{msg:"session expired"})}
+        else
+        {
+        var mid=mresult[0].Manager_id;
+        ///---------------------------------------------
+       Task.find({From_manager:mid},(err,task_result)=>{
+         if (err) throw err;
+         else if (task_result.length!=0)
+         {
+             var requestStatus=task_result.map((rec)=>{
+                if(rec.Status==0)
+                return "Pending ";
+                else if(rec.Status==1)
+                return "Unable to do";
+                else if(rec.Status==2)
+                return "In-Progress";
+                else if(rec.Status==3)
+                return "Completed";
+             })//map end
+             var finaldata=task_result.map((rec,index)=>{
+              var pair={requestStatus:requestStatus[index]};
+              var objs={...rec,...pair}
+              return objs;
+             })//finaldata end here
+         //console.log(task_result);
+         res.render('view_assigned_task_from_manager',{manager:req.session.manager,task_result:finaldata,success_msg:"data updated"})
+    }
+    else {
+      res.render('view_assigned_task_from_manager',{manager:req.session.manager,msg:"No  Assignments  Yet "})
+
+    }
+       })//task find end here
+        }
+      })//manager find end here
+
+
+
+
+    }
+    else
+    {
+      res.render('view_assigned_task_from_manager',{manager:req.session.manager,msg:"No Data found "})
+
+    }
+  })
+
+});
+//------------------------------------------------------------------------------------------------------------
+//manager_reply_form _action
+router.post('/manager_reply_form_action',(req,res)=>{
+  var message=req.body.message;
+  var to=req.body.to;
+  var from=req.body.from;
+  //console.log(to+"\n"+from+"\n"+message);
+  Manager.find({Email_id:req.session.manager},(err,result)=>{
+    var mid=result[0].Manager_id;
+    Message.find({To:mid},(err,msg_data)=>{
+      if (err) throw err;
+      else if (msg_data!=0)
+       {
+         //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@22
+         //                Creating message
+                    var newmessage=Message({
+                      Message:message,
+                      To:to,
+                      From:from,
+                           })
+                     newmessage.save().then((data)=>{});
+         //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+         res.render('manager_inbox',{manager:req.session.manager,msg_data:msg_data,success_msg:"Message sent to employee"})
+
+      }
+      else {
+        res.render('manager_inbox',{msg:"No data Found"})
+      }
+    })//Message
+
+  })//manager
+});
+//------------------------------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------------------------------------
 
 //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
                             // Support MODULE
 //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+//---------------------------------------------------------------------------
+router.get('/support_profile',(req,res)=>{
+  Support.find({Email_id:req.session.support},(err,result)=>{
+    res.render('support_profile',{data:result,support:req.session.support})
+
+  })
+})
+//----------------------------------------------------------------------------
+//form action of update employee
+router.post('/update_support',(req,res)=>{
+     Support.update({Support_id:req.body.Support_id},{First_name:req.body.fname,Last_name:req.body.lname,Password:req.body.pwd,Mobile:req.body.mno,Emaild:req.body.email},(err,result)=>{
+     res.render('Supporthome',{support:req.session.support,success_msg:"Profile Successfully Updated ..!!!"})})})
+//-----------------------------------------------------------------------------------------------------------
 //view asset_request from employee
 router.get('/view_pending_requests_from_support',(req,res)=>{
 

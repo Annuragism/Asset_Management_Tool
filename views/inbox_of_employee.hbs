@@ -79,7 +79,28 @@ body {font-family: "Lato", sans-serif;}
     <a href="/inbox_of_employee" class="btn btn-outline-dark" style="float:right;margin-right:20px;">Inbox</a>
 </div>
 <div class="container">
+  <table class="table table-hover">
+  <thead>
+  <tr>
+  <th>From</th>
+  <th>To</th>
+  <th>Message</th>
+  <th>Date</th>
+  <th></th>
 
+  </tr>
+  </thead>
+  <tbody>
+  {{# each msg_data}}
+  <tr>
+  <td>{{this.From}}</td>
+  <td>{{this.To}}</td>
+  <td>{{this.Message}}</td>
+  <td>{{this.send_date}}</td>
+  </tr>
+  {{/each}}
+  </tbody>
+  </table>
 
 </div><!--//container -->
 </div>

@@ -67,50 +67,45 @@ body {font-family: "Lato", sans-serif;}
   <a href="/manager_profile"><i class="fa fa-fw fa-edit"></i>Update Profile</a>
   <a href="/manager-logout"><i class="fa fa-fw fa-sign-out"></i>Logout</a>
 </div>
-
-
 <!-- :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: -->
 <div class="main">
   <div class="msg">
     {{#if msg}}<div class="card bg-danger text-dark"><div class="card-body">{{msg}}</div></div>{{/if}}
     {{#if success_msg}}<div class="card bg-success text-white"><div class="card-body">{{success_msg}}</div></div>{{/if}}
   </div>
-  <div class="jumbotron">
-    <h2>View My Requests</h2>
-
+  <div class="jumbotron jumbotron-fluid">
+  <h2>Assign task to Employees:</h2>
+  <a href="/view_assigned_task_from_manager" class="btn btn-primary">view assigned task</a>
 </div>
-</div>
-
 <div class="container">
-  {{#if request}}
-  <table class="table table-hover">
-  <thead>
-  <tr>
-  <th>Manager id</th>
-  <th>Asset id</th>
-  <th>Asset Name</th>
-  <th>Remark</th>
-  <th>Status</th>
-  <th>Date of Request</th>
+  <form action="assign-task-from-manager" method="post">
+    <div class="form-group">
+          <label for="email">Assign task to Employee :</label>
+          <select class="form-control" id="eid"  name="eid">
+            <option disabled>--choose Employee ID--</option>
 
-  </tr>
-  </thead>
-  <tbody>
-  {{# each request}}
-  <tr>
-  <td>{{this._doc.Manager_id}}</td>
-  <td>{{this._doc.Asset_id}}</td>
-  <td>{{this._doc.Asset_name}}</td>
-  <td>{{this._doc.Remarks}}</td>
-  <td>{{this.requestStatus}}</td>
-  <td>{{this._doc.Request_date}}</td>
-  </tr>
-  {{/each}}
-</tbody>
-</table>
-{{else}}
-<h2>No Pending Requests..!!!</h2>
-{{/if}}
+            {{#each employee_data}}
+            <option value="{{this.Emp_id}}">{{this.First_name}} {{this.Last_name}}({{this.Emp_id}})</option>
+            {{/each}}
+          </select>
+    </div>
+    <div class="form-group">
+          <label for="email">Task  name:</label>
+          <input type="text" class="form-control" id="tname"  name="tname">
+        </div>
+        <div class="form-group">
+              <label for="email">Task Description:</label>
+              <textarea class="form-control" id="tdescription"  name="tdescription"></textarea>
+            </div>
+            <div class="form-group">
+                  <label for="email">Deadline Date:</label><span style="color:blue;">Today's date is:{{today}}.</span>
+                  <input type="date" class="form-control" id="deadline"  name="deadline" value="{{today}}"/>
+                </div>
+            <input type="submit" class="btn btn-success" value="Assign Task"/>
+</form>
+
+
+
 </div><!--//container -->
 </div>
 </body>

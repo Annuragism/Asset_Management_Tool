@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>AMS-Employee home</title
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
@@ -72,14 +71,17 @@ body {font-family: "Lato", sans-serif;}
   </div>
   <div class="jumbotron jumbotron-fluid">
   <h2>Welcome Employee:</h2><h4>{{employee}}</h4><h2>This is Asset Management Software tool</h2>
-  <a href="/view_my_team_employee" class="btn btn-outline-primary">View My Team</a>
+  <a href="/view_my_team_employee" class="btn btn-primary">View My Team</a>
 
-  <a href="/sentbox_of_employee" class="btn btn-outline-dark" style="float:right;margin-right:20px;">Sent box<Sapn class="badge"></span></a>
-    <a href="/send_message_to_manager" class="btn btn-outline-dark" style="float:right;margin-right:20px;">Send Message</a>
-    <a href="/inbox_of_employee" class="btn btn-outline-dark" style="float:right;margin-right:20px;">Inbox</a>
+  <a href="/sentbox_of_employee" class="btn btn-primary" style="float:right;margin-right:20px;">Sent box<Sapn class="badge"></span></a>
+    <a href="/send_message_to_manager" class="btn btn-primary" style="float:right;margin-right:20px;">Send Message</a>
 </div>
 <div class="container">
-
+<h2>Team leader: {{mid}}</h2><br>
+<h3>Team mates:<h3>
+{{#each emp_data}}
+<h4>>{{this.Emp_id}}--{{this.First_name}} {{this.Last_name}}</h4>
+{{/each}}
 
 </div><!--//container -->
 </div>

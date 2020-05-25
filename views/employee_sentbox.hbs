@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>AMS-Employee home</title
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
@@ -58,7 +57,6 @@ body {font-family: "Lato", sans-serif;}
   <a href="/ehome"><i class="fa fa-fw fa-home"></i> Home</a>
   <a href="/raise_a_request"><i class="fa fa-fw fa-wrench"></i> Raise a request</a>
   <a href="/view_my_request"><i class="fa fa-fw fa-user"></i> View my requests</a>
-  <a href="/view_my_task"><i class="fa fa-fw fa-user"></i> View my Tasks</a>
   <a href="/employee_assets"><i class="fa fa-fw fa-wrench"></i>My Assets</a>
   <a href="/transfer_assets"><i class="fa fa-fw fa-wrench"></i>Transfer Assets</a>
   <a href="/employee_profile"><i class="fa fa-fw fa-edit"></i>Update Profile</a>
@@ -71,15 +69,36 @@ body {font-family: "Lato", sans-serif;}
     {{#if success_msg}}<div class="card bg-success text-white"><div class="card-body">{{success_msg}}</div></div>{{/if}}
   </div>
   <div class="jumbotron jumbotron-fluid">
-  <h2>Welcome Employee:</h2><h4>{{employee}}</h4><h2>This is Asset Management Software tool</h2>
-  <a href="/view_my_team_employee" class="btn btn-outline-primary">View My Team</a>
+    <h2>Sentbox</h2>
 
-  <a href="/sentbox_of_employee" class="btn btn-outline-dark" style="float:right;margin-right:20px;">Sent box<Sapn class="badge"></span></a>
-    <a href="/send_message_to_manager" class="btn btn-outline-dark" style="float:right;margin-right:20px;">Send Message</a>
-    <a href="/inbox_of_employee" class="btn btn-outline-dark" style="float:right;margin-right:20px;">Inbox</a>
+  <a href="/sentbox_of_employee" class="btn btn-primary" style="float:right;margin-right:20px;">Sent box<Sapn class="badge"></span></a>
+    <a href="/send_message_to_manager" class="btn btn-primary" style="float:right;margin-right:20px;">Send Message</a>
 </div>
 <div class="container">
+  <table class="table table-hover">
+  <thead>
+  <tr>
+  <th>From</th>
+  <th>To</th>
+  <th>Subject</th>
+  <th>Message</th>
+  <th>Date</th>
 
+  </tr>
+  </thead>
+  <tbody>
+  {{# each msg_data}}
+  <tr>
+  <td>{{this.From}}</td>
+  <td>{{this.To}}</td>
+  <td>{{this.Subject}}</td>
+  <td>{{this.Message}}</td>
+  <td>{{this.send_date}}</td>
+
+  </tr>
+  {{/each}}
+  </tbody>
+  </table>
 
 </div><!--//container -->
 </div>

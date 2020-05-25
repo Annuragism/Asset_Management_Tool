@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>AMS-Employee home</title
+  <title>AMS-Employee </title
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
@@ -52,6 +52,26 @@ body {font-family: "Lato", sans-serif;}
 </style>
 </head>
 <body>
+
+  <script>
+  $(document).ready(function(){
+    $('#Total_task').hide();
+    $('#percentage').hide();
+
+    var completed=parseInt($('#completed').val());
+    var incompleted=parseInt($('#incompleted').val());
+    var total=completed+incompleted;
+    var percentage= (completed/total)*100;
+    $('#Total_task').show();
+    $('#percentage').show();
+    document.getElementById("percentage").innerHTML = percentage+"%";
+
+    //$('#percentage').val(percentage+"%");
+    document.getElementById("Total_task").innerHTML = total;
+    //$('#Total_task').val(total);
+    })
+
+  </script>
 <!-- :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: -->
 <div class="sidebar">
     <a href="#"><i class="fa fa-fw fa-user"></i> {{employee}}
@@ -71,16 +91,31 @@ body {font-family: "Lato", sans-serif;}
     {{#if success_msg}}<div class="card bg-success text-white"><div class="card-body">{{success_msg}}</div></div>{{/if}}
   </div>
   <div class="jumbotron jumbotron-fluid">
-  <h2>Welcome Employee:</h2><h4>{{employee}}</h4><h2>This is Asset Management Software tool</h2>
-  <a href="/view_my_team_employee" class="btn btn-outline-primary">View My Team</a>
-
-  <a href="/sentbox_of_employee" class="btn btn-outline-dark" style="float:right;margin-right:20px;">Sent box<Sapn class="badge"></span></a>
-    <a href="/send_message_to_manager" class="btn btn-outline-dark" style="float:right;margin-right:20px;">Send Message</a>
-    <a href="/inbox_of_employee" class="btn btn-outline-dark" style="float:right;margin-right:20px;">Inbox</a>
+  <h2>Task Statistics</h2>
 </div>
 <div class="container">
-
-
+{{# if completed_task}}
+<h4 style="text-align:center; text-decoration:underline color:blue;">Completed task:(<span >{{completed_task_length}}</span>)<input type="hidden" id="completed" value="{{completed_task_length}}" /></h4>
+  {{#each completed_task}}<span>
+<h4 style="text-align:center;">{{this.Task_name}}</h4>
+{{/each}}
+{{else}}
+<h4>0</h4>
+{{/if}}
+<hr style="border-color:black;">
+{{# if incompleted_task}}
+<h4 style="text-align:center; text-decoration:underline color:blue;">Incompleted task:(<span>{{incompleted_task_length}}</span>)<input type="hidden" id="incompleted" value="{{incompleted_task_length}}" /></h4>
+  {{#each incompleted_task}}
+<h4 style="text-align:center;">{{this.Task_name}}</h4>
+{{/each}}
+{{else}}
+<h4>0</h4>
+{{/if}}
+<hr style="border-color:black;">
+<div  style="text-align:center;">
+<h4>Total Task:</h4><h1 style="text-align:center;"   style="width:300px;"  id="Total_task"  ></h1><br>
+<h4>Completion percentage:</h4><h1 style="text-align:center;"   style="width:300px;"  id="percentage"  ></h1>
+</div>
 </div><!--//container -->
 </div>
 </body>

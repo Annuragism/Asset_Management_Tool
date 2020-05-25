@@ -67,10 +67,39 @@ body {font-family: "Lato", sans-serif;}
     {{#if success_msg}}<div class="card bg-success text-white"><div class="card-body">{{success_msg}}</div></div>{{/if}}
   </div>
   <div class="jumbotron jumbotron-fluid">
-  <h2>Welcom Support:</h2><h4>{{support}}</h4>
+  <h2>Welcome Support:</h2><h4>{{support}}</h4><h2>Update Your Profile</h2>
 </div>
 <div class="container">
+<form action="update_support" method="post">
+  {{# each data}}
+  <div class="form-group">
+        <label >Support ID:</label>
+        <input type="text" class="form-control" id="Support_id"  name="Support_id" value="{{this.Support_id}}" readonly>
+      </div>
+  <div class="form-group">
+        <label > First name:</label>
+        <input type="text" class="form-control" id="fname"  name="fname" value="{{this.First_name}}">
+      </div>
+      <div class="form-group">
+            <label for="email"> Last name:</label>
+            <input type="text" class="form-control" id="lname"  name="lname" value="{{this.Last_name}}">
+          </div>
 
+          <div class="form-group">
+                <label for="email">Enter Emaild:</label>
+                <input type="email" class="form-control" id="email"  name="email" value="{{this.Email_id}}">
+          </div>
+      <div class="form-group">
+        <label for="pwd"> Password:</label>
+        <input type="text" class="form-control" id="pwd"  name="pwd" value="{{this.Password}}">
+      </div>
+      <div class="form-group">
+        <label for="mobile">Mobile:</label>
+        <input type="text" class="form-control" id="mno"  name="mno" value="{{this.Mobile}}">
+      </div>
+      {{/each}}
+      <input type="submit"  class="btn btn-primary" value="Update My Profile">
+</form>
 
 </div><!--//container -->
 </div>

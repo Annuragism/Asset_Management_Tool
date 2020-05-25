@@ -51,6 +51,25 @@ body {font-family: "Lato", sans-serif;}
 </style>
 </head>
 <body>
+  <script>
+  $(document).ready(function (){
+    $('.feedback1').show();
+    $('.rating1').show();
+    $('.feedback').hide();
+    $('.rating').hide();
+    $('.save').hide();
+
+      })
+       function f1() {
+         $('.feedback').show();
+         $('.rating').show();
+         $('.save').show();
+
+         $('.feedback1').hide();
+         $('.rating1').hide();
+       }
+
+  </script>
 <!-- :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: -->
 <div class="sidebar">
     <a href="#"><i class="fa fa-fw fa-user"></i> {{manager}}
@@ -67,50 +86,59 @@ body {font-family: "Lato", sans-serif;}
   <a href="/manager_profile"><i class="fa fa-fw fa-edit"></i>Update Profile</a>
   <a href="/manager-logout"><i class="fa fa-fw fa-sign-out"></i>Logout</a>
 </div>
-
-
 <!-- :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: -->
 <div class="main">
   <div class="msg">
     {{#if msg}}<div class="card bg-danger text-dark"><div class="card-body">{{msg}}</div></div>{{/if}}
     {{#if success_msg}}<div class="card bg-success text-white"><div class="card-body">{{success_msg}}</div></div>{{/if}}
   </div>
-  <div class="jumbotron">
-    <h2>View My Requests</h2>
-
+  <div class="jumbotron jumbotron-fluid">
+  <h2>Assigned task :</h2>
+  <a href="/manager_assign_task" class="btn btn-primary">Assign  task</a>
 </div>
-</div>
-
 <div class="container">
-  {{#if request}}
   <table class="table table-hover">
   <thead>
   <tr>
-  <th>Manager id</th>
-  <th>Asset id</th>
-  <th>Asset Name</th>
-  <th>Remark</th>
+  <th>Employee id</th>
+  <th>Task name</th>
+  <th>Description</th>
   <th>Status</th>
-  <th>Date of Request</th>
+  <th>Assign date</th>
+  <th>Deadline</th>
+  <th>Feedback</th>
+  <th>Rating</th>
+  <th>Edit</th>
 
   </tr>
   </thead>
   <tbody>
-  {{# each request}}
+  {{# each task_result}}
   <tr>
-  <td>{{this._doc.Manager_id}}</td>
-  <td>{{this._doc.Asset_id}}</td>
-  <td>{{this._doc.Asset_name}}</td>
-  <td>{{this._doc.Remarks}}</td>
+   <form action="/update_feedback_and_rating_from_manager" method="POST">
+  <td>{{this._doc.Emp_id}}</td>
+  <td>{{this._doc.Task_name}}</td>
+  <td>{{this._doc.Task_description}}</td>
   <td>{{this.requestStatus}}</td>
-  <td>{{this._doc.Request_date}}</td>
+  <td>{{this._doc.Assign_date}}</td>
+  <td>{{this._doc.Deadline_date}}</td>
+  <td class="feedback1">{{this._doc.Feedback}}</td>
+  <td class="rating1">{{this._doc.Rating}}</td>
+  <td class="feedback"><textarea  name="feedback"  >{{this._doc.Feedback}}</textarea></td>
+  <td class="rating"><input type="number" value="{{this._doc.Rating}}"  name="rating" max="10" min ="0" /></td>
+  <input type="hidden" value="{{this._doc.Emp_id}}" name="heid"/>
+  <input type="hidden" value="{{this._doc._id}}" name="id"/>
+
+  <td><input type="button" onclick="f1()  " value="Edit"/></td>
+  <td ><input type="submit" class="btn btn-primary save"   value="Save"/></td>
+
+</form>
   </tr>
   {{/each}}
-</tbody>
-</table>
-{{else}}
-<h2>No Pending Requests..!!!</h2>
-{{/if}}
+  </tbody>
+  </table>
+
+
 </div><!--//container -->
 </div>
 </body>
