@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+
+<style>
+body {font-family: "Lato", sans-serif;}
+
+.sidebar {
+
+  height: 100%;
+  width: 230px;
+  position: fixed;
+  z-index: 1;
+  top: 0;
+  left: 0;
+  background-color: #111;
+  overflow-x: hidden;
+  padding-top: 90px;
+}
+
+.sidebar a {
+  padding: 6px 8px 20px 16px;
+  text-decoration: none;
+  font-size: 20px;
+  color: #818181;
+  display: block;
+}
+
+.sidebar a:hover {
+  color: #f1f1f1;
+}
+.msg{
+  margin-top: 0px;
+}
+
+.main {
+  margin-top:90px;
+  margin-left:230px; /* Same as the width of the sidenav */
+  padding: 0px 10px;
+}
+
+@media screen and (max-height: 450px) {
+  .sidebar {padding-top: 15px;}
+  .sidebar a {font-size: 18px;}
+}
+</style>
+</head>
+<body>
+<!-- :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: -->
+<div class="sidebar">
+    <a href="#"><i class="fa fa-fw fa-user"></i> {{employee}}
+  <a href="/ehome"><i class="fa fa-fw fa-home"></i> Home</a>
+  <a href="/raise_a_request"><i class="fa fa-fw fa-wrench"></i> Raise a request</a>
+  <a href="/view_my_request"><i class="fa fa-fw fa-user"></i> View my requests</a>
+  <a href="/employee_assets"><i class="fa fa-fw fa-wrench"></i>My Assets</a>
+  <a href="/transfer_assets"><i class="fa fa-fw fa-wrench"></i>Transfer Assets</a>
+  <a href="/change_employee_password"><i class="fa fa-fw fa-edit"></i>Change Password</a>
+  <a href="/employee-logout"><i class="fa fa-fw fa-sign-out"></i>Logout</a>
+</div>
+<!-- :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: -->
+<div class="main">
+  <div class="msg">
+    {{#if msg}}<div class="card bg-danger text-dark"><div class="card-body">{{msg}}</div></div>{{/if}}
+    {{#if success_msg}}<div class="card bg-success text-white"><div class="card-body">{{success_msg}}</div></div>{{/if}}
+  </div>
+  <div class="jumbotron jumbotron-fluid">
+  <h2>My Assets:</h2>
+  {{null}}
+</div>
+<div class="container">
+  <table class="table table-hover">
+  <thead>
+  <tr>
+  <th>Asset id</th>
+  <th>Asset Name</th>
+  </tr>
+  </thead>
+  <tbody>
+  {{# each asset}}
+  <tr>
+  <td>{{this.Asset_id}}</td>
+  <td>{{this.Asset_name}}</td>
+  </tr>
+  {{/each}}
+</tbody>
+</table>
+</div><!--//container -->
+</div>
+</body>
+</html>

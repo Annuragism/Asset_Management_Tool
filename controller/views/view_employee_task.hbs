@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+
+<style>
+body {font-family: "Lato", sans-serif;}
+
+.sidebar {
+
+  height: 100%;
+  width: 230px;
+  position: fixed;
+  z-index: 1;
+  top: 0;
+  left: 0;
+  background-color: #111;
+  overflow-x: hidden;
+  padding-top: 90px;
+}
+
+.sidebar a {
+  padding: 6px 8px 20px 16px;
+  text-decoration: none;
+  font-size: 20px;
+  color: #818181;
+  display: block;
+}
+
+.sidebar a:hover {
+  color: #f1f1f1;
+}
+.msg{
+  margin-top: 0px;
+}
+
+.main {
+  margin-top:90px;
+  margin-left:230px; /* Same as the width of the sidenav */
+  padding: 0px 10px;
+}
+
+@media screen and (max-height: 450px) {
+  .sidebar {padding-top: 15px;}
+  .sidebar a {font-size: 18px;}
+}
+</style>
+</head>
+<body>
+<!-- :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: -->
+<div class="sidebar">
+    <a href="#"><i class="fa fa-fw fa-user"></i> {{employee}}
+  <a href="/ehome"><i class="fa fa-fw fa-home"></i> Home</a>
+  <a href="/raise_a_request"><i class="fa fa-fw fa-wrench"></i> Raise a request</a>
+  <a href="/view_my_request"><i class="fa fa-fw fa-user"></i> View my requests</a>
+  <a href="/view_my_task"><i class="fa fa-fw fa-user"></i> View my Tasks</a>
+  <a href="/employee_assets"><i class="fa fa-fw fa-wrench"></i>My Assets</a>
+  <a href="/transfer_assets"><i class="fa fa-fw fa-wrench"></i>Transfer Assets</a>
+  <a href="/employee_profile"><i class="fa fa-fw fa-edit"></i>Update Profile</a>
+  <a href="/employee-logout"><i class="fa fa-fw fa-sign-out"></i>Logout</a>
+</div>
+<!-- :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: -->
+<div class="main">
+  <div class="msg">
+    {{#if msg}}<div class="card bg-danger text-dark"><div class="card-body">{{msg}}</div></div>{{/if}}
+    {{#if success_msg}}<div class="card bg-success text-white"><div class="card-body">{{success_msg}}</div></div>{{/if}}
+  </div>
+  <div class="jumbotron jumbotron-fluid">
+  <h2>My Tasks</h2>
+  <a href="/view_employee_task_statistics" class="btn btn-outline-dark">View Task Statistics</a>
+  <a href="/sentbox_of_employee" class="btn btn-primary" style="float:right;margin-right:20px;">Sent box<Sapn class="badge"></span></a>
+    <a href="/send_message_to_manager" class="btn btn-primary" style="float:right;margin-right:20px;">Send Message</a>
+</div>
+{{#each finaldata}}
+<div class="container">
+  <div style="float:right;color:green;">
+<h5 >Rating:{{this._doc.Rating}}/10</h5><br>
+<h5 >Feedback:{{this._doc.Feedback}}</h5>
+</div>
+
+
+
+    <h2 >Task name:{{this._doc.Task_name}}</h2><br>
+    <h4>Description:{{this._doc.Task_description}}</h4><br>
+    <h4>Deadline:{{this._doc.Deadline_date}}</h4><br>
+    <h4>Current  Status:   {{this.requestStatus}}</h4>
+    <h4><label>Change  Status:</label>
+
+      <form action="/view_my_task_form_action" method="POST">
+    <select  class="form-control" id="status"  name="status" style="width:150px;" >
+      <option disabled>--choose Employee ID--</option>
+      <option value="2">In progress</option>
+      <option value="1">Unable to do</option>
+      <option value="3">Completed</option>
+
+    </select></h4>
+     <br>
+
+     <input type="hidden" value="{{this._doc.Emp_id}}" name="eid"/>
+
+     <input type="hidden" value="{{this._doc._id}}" name="id"/>
+    <input type="submit" class="btn btn-success" value="Submit"/>
+    <hr style="border-color:black;">
+    </form>
+    {{/each}}
+
+
+
+</div><!--//container -->
+</div>
+</body>
+</html>

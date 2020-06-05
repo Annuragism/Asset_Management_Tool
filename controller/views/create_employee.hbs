@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+
+<style>
+body {font-family: "Lato", sans-serif;}
+
+.sidebar {
+
+  height: 100%;
+  width: 230px;
+  position: fixed;
+  z-index: 1;
+  top: 0;
+  left: 0;
+  background-color: #111;
+  overflow-x: hidden;
+  padding-top: 90px;
+}
+
+.sidebar a {
+  padding: 6px 8px 20px 16px;
+  text-decoration: none;
+  font-size: 20px;
+  color: #818181;
+  display: block;
+}
+
+.sidebar a:hover {
+  color: #f1f1f1;
+}
+
+.main {
+  margin-top:90px;
+  margin-left:230px; /* Same as the width of the sidenav */
+  padding: 0px 10px;
+}
+
+@media screen and (max-height: 450px) {
+  .sidebar {padding-top: 15px;}
+  .sidebar a {font-size: 18px;}
+}
+</style>
+</head>
+<body>
+  <script>
+  $(document).ready(function(){
+    $('#mid').hide();
+    $('#hrid').hide();
+    $('#Emp_id').hide();
+    $('#Manager_id').hide();
+    $('#Support_id').hide();
+    })
+function blocks() {
+
+      var designation=$('#designation').val();
+      if(designation=='Employee')
+      {
+      $('#mid').show();
+      $('#Emp_id').show();
+      $('#Manager_id').hide();
+      $('#Support_id').hide();
+      $('#hrid').hide();
+
+      }
+      else if (designation=='Manager') {
+        $('#Manager_id').show();
+        $('#Emp_id').hide();
+        $('#Support_id').hide();
+        $('#mid').hide();
+        $('#hrid').hide();
+
+
+      }
+      else if (designation=='Support') {
+        $('#Support_id').show();
+        $('#Manager_id').hide();
+        $('#Emp_id').hide();
+        $('#mid').hide();
+        $('#hrid').hide();
+
+
+      }
+      else if (designation=='HR') {
+        $('#Support_id').hide();
+        $('#Manager_id').hide();
+        $('#Emp_id').hide();
+        $('#mid').hide();
+        $('#hrid').show();
+
+
+      }
+      else {
+        $('#mid').hide();
+        $('#Manager_id').hide();
+        $('#Emp_id').hide();
+        $('#Support_id').hide();
+        $('#hrid').hide();
+
+
+
+      }
+
+
+  }
+
+      </script>
+<!-- :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: -->
+<div class="sidebar">
+  <a href="#"><i class="fa fa-fw fa-user"></i> {{admin}}
+  <a href="/adminhome"><i class="fa fa-fw fa-home"></i> Home</a>
+  <a href="/create_asset"><i class="fa fa-fw fa-building"></i>Create Asset</a>
+  <a href="/create_employee"><i class="fa fa-fw fa-wrench"></i>Employee</a>
+  <a href="/view_user"><i class="fa fa-fw fa-user"></i> View users</a>
+  <a href="/change_password"><i class="fa fa-fw fa-edit"></i>Change Password</a>
+  <a href="/admin-logout"><i class="fa fa-fw fa-sign-out"></i>Logout</a>
+</div>
+<!-- :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: -->
+<div class="main">
+  <div class="jumbotron">
+  <h2>Create Employee</h2>
+</div>
+<div class="justify-content-md-between" style="width:600px; margin-left:300px; margin-bottom:50px;">
+<form action="create_employee" method="post">
+  <div class="form-group">
+        <label for="email">Enter First name:</label>
+        <input type="text" class="form-control" id="fname"  name="fname">
+      </div>
+      <div class="form-group">
+            <label for="email">Enter Last name:</label>
+            <input type="text" class="form-control" id="lname"  name="lname">
+          </div>
+
+          <div class="form-group">
+                <label for="email">Enter Emaild:</label>
+                <input type="email" class="form-control" id="email"  name="email">
+          </div>
+      <div class="form-group">
+        <label for="pwd"> Password:</label>
+        <input type="password" class="form-control" id="pwd"  name="pwd">
+      </div>
+
+      <div class="form-group">
+            <label for="email">Enter Mobile number:</label>
+            <input type="text" class="form-control" id="lname"  name="mobile">
+      </div>
+      <div class="form-group">
+            <label for="email">Enter your Designation:</label>
+            <select class="form-control" id="designation" onclick="blocks()" name="designation">
+              <option>--Select--</option>
+              <option>Employee</option>
+              <option>Manager</option>
+              <option>HR</option>
+              <option>Support</option>
+            </select>
+      </div>
+      <div class="form-group" id="hrid">
+            <label for="email">Enter HR id: (should be H-1,H-2...etc)</label>
+            <input type="text" class="form-control" id="HR"  name="HR" value="H-">
+      </div>
+      <div class="form-group" id="Emp_id">
+            <label for="email">Enter Employee id:(should be E-1,E-2...etc)</label>
+            <input type="text" class="form-control" id="Employee"  name="Employee" value="E-">
+      </div>
+       <div class="form-group" id="Manager_id">
+              <label for="email">Enter Manager id:(should be M-1,M-2...etc)</label>
+              <input type="text" class="form-control" id="Manager"  name="Manager" value="M-">
+        </div>
+        <div class="form-group" id="Support_id">
+              <label for="email">Enter Support id:(should be S-1,S-2...etc)</label>
+              <input type="text" class="form-control" id="Support"  name="Support" value="S-">
+        </div>
+      <div class="form-group" id="mid">
+            <label for="email">Belongs to which manager:</label>
+            <select class="form-control" id="mid"  name="mid">
+              {{#each ManagerResult}}
+              <option value="{{this.Manager_id}}">{{this.Manager_id}}({{this.First_name}}{{this.Last_name}})</option>
+              {{/each}}
+            </select>
+      </div>
+
+      <button type="submit" class="btn btn-primary">Create Emoployee</button>
+</form>
+</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+
+<style>
+body {font-family: "Lato", sans-serif;}
+
+.sidebar {
+
+  height: 100%;
+  width: 230px;
+  position: fixed;
+  z-index: 1;
+  top: 0;
+  left: 0;
+  background-color: #111;
+  overflow-x: hidden;
+  padding-top: 90px;
+}
+
+.sidebar a {
+  padding: 6px 8px 20px 16px;
+  text-decoration: none;
+  font-size: 20px;
+  color: #818181;
+  display: block;
+}
+
+.sidebar a:hover {
+  color: #f1f1f1;
+}
+.msg{
+  margin-top: 0px;
+}
+
+.main {
+  margin-top:90px;
+  margin-left:230px; /* Same as the width of the sidenav */
+  padding: 0px 10px;
+}
+
+@media screen and (max-height: 450px) {
+  .sidebar {padding-top: 15px;}
+  .sidebar a {font-size: 18px;}
+}
+</style>
+</head>
+<body>
+  <script>
+  $(document).ready(function (){
+    $('.feedback1').show();
+    $('.rating1').show();
+    $('.feedback').hide();
+    $('.rating').hide();
+    $('.save').hide();
+
+      })
+       function f1() {
+         $('.feedback').show();
+         $('.rating').show();
+         $('.save').show();
+
+         $('.feedback1').hide();
+         $('.rating1').hide();
+       }
+
+  </script>
+<!-- :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: -->
+<div class="sidebar">
+    <a href="#"><i class="fa fa-fw fa-user"></i> {{manager}}
+  <a href="/mhome"><i class="fa fa-fw fa-home"></i> Home</a>
+  <a href="/view_pending_requests"><i class="fa fa-fw fa-wrench"></i>View Pending Requests</a>
+  <a href="/manager_assign_task"><i class="fa fa-fw fa-wrench"></i>Assign Task to Employee</a>
+  <a href="/empoyee_and_asset_of_manager"><i class="fa fa-fw fa-user"></i> Employees and Assets</a>
+  <hr style="color:white;">
+
+  <a href="/raise_a_request_by_manager"><i class="fa fa-fw fa-wrench"></i>Raise a Requests</a>
+  <a href="/view_manager_request"><i class="fa fa-fw fa-wrench"></i>View My Requests</a>
+  <a href="/view_manager_asset"><i class="fa fa-fw fa-wrench"></i>View My Asset</a>
+  <a href="/transfer_manager_asset"><i class="fa fa-fw fa-wrench"></i>Transfer My Assets</a>
+  <a href="/manager_profile"><i class="fa fa-fw fa-edit"></i>Update Profile</a>
+  <a href="/manager-logout"><i class="fa fa-fw fa-sign-out"></i>Logout</a>
+</div>
+<!-- :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: -->
+<div class="main">
+  <div class="msg">
+    {{#if msg}}<div class="card bg-danger text-dark"><div class="card-body">{{msg}}</div></div>{{/if}}
+    {{#if success_msg}}<div class="card bg-success text-white"><div class="card-body">{{success_msg}}</div></div>{{/if}}
+  </div>
+  <div class="jumbotron jumbotron-fluid">
+  <h2>Assigned task :</h2>
+  <a href="/manager_assign_task" class="btn btn-primary">Assign  task</a>
+</div>
+<div class="container">
+  <table class="table table-hover">
+  <thead>
+  <tr>
+  <th>Employee id</th>
+  <th>Task name</th>
+  <th>Description</th>
+  <th>Status</th>
+  <th>Assign date</th>
+  <th>Deadline</th>
+  <th>Feedback</th>
+  <th>Rating</th>
+  <th>Edit</th>
+
+  </tr>
+  </thead>
+  <tbody>
+  {{# each task_result}}
+  <tr>
+   <form action="/update_feedback_and_rating_from_manager" method="POST">
+  <td>{{this._doc.Emp_id}}</td>
+  <td>{{this._doc.Task_name}}</td>
+  <td>{{this._doc.Task_description}}</td>
+  <td>{{this.requestStatus}}</td>
+  <td>{{this._doc.Assign_date}}</td>
+  <td>{{this._doc.Deadline_date}}</td>
+  <td class="feedback1">{{this._doc.Feedback}}</td>
+  <td class="rating1">{{this._doc.Rating}}</td>
+  <td class="feedback"><textarea  name="feedback"  >{{this._doc.Feedback}}</textarea></td>
+  <td class="rating"><input type="number" value="{{this._doc.Rating}}"  name="rating" max="10" min ="0" /></td>
+  <input type="hidden" value="{{this._doc.Emp_id}}" name="heid"/>
+  <input type="hidden" value="{{this._doc._id}}" name="id"/>
+
+  <td><input type="button" onclick="f1()  " value="Edit"/></td>
+  <td ><input type="submit" class="btn btn-primary save"   value="Save"/></td>
+
+</form>
+  </tr>
+  {{/each}}
+  </tbody>
+  </table>
+
+
+</div><!--//container -->
+</div>
+</body>
+</html>
